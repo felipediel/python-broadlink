@@ -315,7 +315,7 @@ class device:
 
                 while True:
                     time_left = timeout - (time.time() - start_time)
-                    conn.settimeout(min(5, time_left))
+                    conn.settimeout(min(1, time_left))
                     conn.sendto(packet, self.host)
 
                     try:
