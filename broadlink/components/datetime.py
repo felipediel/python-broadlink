@@ -1,3 +1,4 @@
+"""Datetime component."""
 import datetime as dt
 import time
 
