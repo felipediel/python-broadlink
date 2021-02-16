@@ -235,6 +235,14 @@ class device:
         check_error(response[0x22:0x24])
         self.is_locked = bool(state)
 
+    def update(self) -> None:
+        """Update device name and lock status."""
+        response = self.send_packet(0x6A, bytes([1]))
+        check_error(response[0x22:0x24])
+        payload = self.decrypt(response[0x38:])[0x4:]
+        self.name = payload[0x48:].split(b"\x00")[0].decode()
+        self.is_locked = bool(payload[0x87])
+
     def get_type(self) -> str:
         """Return device type."""
         return self.type
