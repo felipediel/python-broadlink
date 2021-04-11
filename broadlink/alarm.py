@@ -18,11 +18,10 @@ class S1C(Device):
         """Return the state of the sensors."""
         packet = bytearray(16)
         packet[0] = 0x06
-        response = self.send_packet(0x6A, packet)
-        e.check_error(response[0x22:0x24])
-        payload = self.decrypt(response[0x38:])
-        count = payload[0x4]
-        sensor_data = payload[0x6:]
+        resp, err = self.send_packet(0x6A, packet)
+        e.check_error(err)
+        count = resp[0x4]
+        sensor_data = resp[0x6:]
         sensors = [
             bytearray(sensor_data[i * 83 : (i + 1) * 83])
             for i in range(len(sensor_data) // 83)

@@ -144,8 +144,7 @@ def exception(err_code: int) -> BroadlinkException:
         return UnknownError(err_code, "Unknown error")
 
 
-def check_error(error: bytes) -> None:
+def check_error(err_code: int) -> None:
     """Raise exception if an error occurred."""
-    error_code = struct.unpack("h", error)[0]
-    if error_code:
-        raise exception(error_code)
+    if err_code:
+        raise exception(err_code)

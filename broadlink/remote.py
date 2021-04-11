@@ -13,10 +13,9 @@ class rmmini(Device):
     def _send(self, command: int, data: bytes = b"") -> bytes:
         """Send a packet to the device."""
         packet = struct.pack("<I", command) + data
-        resp = self.send_packet(0x6A, packet)
-        e.check_error(resp[0x22:0x24])
-        payload = self.decrypt(resp[0x38:])
-        return payload[0x4:]
+        resp, err = self.send_packet(0x6A, packet)
+        e.check_error(err)
+        return resp[0x4:]
 
     def update(self) -> None:
         """Update device name and lock status."""
@@ -78,11 +77,10 @@ class rmminib(rmmini):
     def _send(self, command: int, data: bytes = b"") -> bytes:
         """Send a packet to the device."""
         packet = struct.pack("<HI", len(data) + 4, command) + data
-        resp = self.send_packet(0x6A, packet)
-        e.check_error(resp[0x22:0x24])
-        payload = self.decrypt(resp[0x38:])
-        p_len = struct.unpack("<H", payload[:0x2])[0]
-        return payload[0x6 : p_len + 2]
+        resp, err = self.send_packet(0x6A, packet)
+        e.check_error(err)
+        p_len = struct.unpack("<H", resp[:0x2])[0]
+        return resp[0x6 : p_len + 2]
 
 
 class rm4mini(rmminib):

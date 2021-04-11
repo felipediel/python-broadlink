@@ -19,10 +19,9 @@ class dooya(Device):
         packet[4] = magic2
         packet[9] = 0xFA
         packet[10] = 0x44
-        response = self.send_packet(0x6A, packet)
-        e.check_error(response[0x22:0x24])
-        payload = self.decrypt(response[0x38:])
-        return payload[4]
+        resp, err = self.send_packet(0x6A, packet)
+        e.check_error(err)
+        return resp[4]
 
     def open(self) -> int:
         """Open the curtain."""

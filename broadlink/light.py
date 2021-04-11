@@ -26,9 +26,9 @@ class lb1(Device):
         Example: `{'red': 128, 'blue': 255, 'green': 128, 'pwr': 1, 'brightness': 75, 'colortemp': 2700, 'hue': 240, 'saturation': 50, 'transitionduration': 1500, 'maxworktime': 0, 'bulb_colormode': 1, 'bulb_scenes': '["@01686464,0,0,0", "#ffffff,10,0,#000000,190,0,0", "2700+100,0,0,0", "#ff0000,500,2500,#00FF00,500,2500,#0000FF,500,2500,0", "@01686464,100,2400,@01686401,100,2400,0", "@01686464,100,2400,@01686401,100,2400,@005a6464,100,2400,@005a6401,100,2400,0", "@01686464,10,0,@00000000,190,0,0", "@01686464,200,0,@005a6464,200,0,0"]', 'bulb_scene': '', 'bulb_sceneidx': 255}`
         """
         packet = self._encode(1, {})
-        response = self.send_packet(0x6A, packet)
-        e.check_error(response[0x22:0x24])
-        return self._decode(response)
+        resp, err = self.send_packet(0x6A, packet)
+        e.check_error(err)
+        return self._decode(resp)
 
     def set_state(
         self,
@@ -79,9 +79,9 @@ class lb1(Device):
             state["bulb_sceneidx"] = int(bulb_sceneidx)
 
         packet = self._encode(2, state)
-        response = self.send_packet(0x6A, packet)
-        e.check_error(response[0x22:0x24])
-        return self._decode(response)
+        resp, err = self.send_packet(0x6A, packet)
+        e.check_error(err)
+        return self._decode(resp)
 
     def _encode(self, flag: int, state: dict) -> bytes:
         """Encode a JSON packet."""
@@ -99,9 +99,8 @@ class lb1(Device):
 
     def _decode(self, response: bytes) -> dict:
         """Decode a JSON packet."""
-        payload = self.decrypt(response[0x38:])
-        js_len = struct.unpack_from("<I", payload, 0xA)[0]
-        state = json.loads(payload[0xE : 0xE + js_len])
+        js_len = struct.unpack_from("<I", response, 0xA)[0]
+        state = json.loads(response[0xE : 0xE + js_len])
         return state
 
 
@@ -124,9 +123,9 @@ class lb27r1(Device):
         Example: `{'red': 128, 'blue': 255, 'green': 128, 'pwr': 1, 'brightness': 75, 'colortemp': 2700, 'hue': 240, 'saturation': 50, 'transitionduration': 1500, 'maxworktime': 0, 'bulb_colormode': 1, 'bulb_scenes': '["@01686464,0,0,0", "#ffffff,10,0,#000000,190,0,0", "2700+100,0,0,0", "#ff0000,500,2500,#00FF00,500,2500,#0000FF,500,2500,0", "@01686464,100,2400,@01686401,100,2400,0", "@01686464,100,2400,@01686401,100,2400,@005a6464,100,2400,@005a6401,100,2400,0", "@01686464,10,0,@00000000,190,0,0", "@01686464,200,0,@005a6464,200,0,0"]', 'bulb_scene': ''}`
         """
         packet = self._encode(1, {})
-        response = self.send_packet(0x6A, packet)
-        e.check_error(response[0x22:0x24])
-        return self._decode(response)
+        resp, err = self.send_packet(0x6A, packet)
+        e.check_error(err)
+        return self._decode(resp)
 
     def set_state(
         self,
@@ -174,9 +173,9 @@ class lb27r1(Device):
             state["bulb_scene"] = str(bulb_scene)
 
         packet = self._encode(2, state)
-        response = self.send_packet(0x6A, packet)
-        e.check_error(response[0x22:0x24])
-        return self._decode(response)
+        resp, err = self.send_packet(0x6A, packet)
+        e.check_error(err)
+        return self._decode(resp)
 
     def _encode(self, flag: int, state: dict) -> bytes:
         """Encode a JSON packet."""
@@ -191,7 +190,6 @@ class lb27r1(Device):
 
     def _decode(self, response: bytes) -> dict:
         """Decode a JSON packet."""
-        payload = self.decrypt(response[0x38:])
-        js_len = struct.unpack_from("<I", payload, 0x08)[0]
-        state = json.loads(payload[0x0C : 0x0C + js_len])
+        js_len = struct.unpack_from("<I", response, 0x08)[0]
+        state = json.loads(response[0x0C : 0x0C + js_len])
         return state

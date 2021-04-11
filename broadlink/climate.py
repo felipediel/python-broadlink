@@ -18,22 +18,21 @@ class hysen(Device):
         packet.extend(request)
         packet.extend(CRC16.calculate(request).to_bytes(2, "little"))
 
-        response = self.send_packet(0x6A, packet)
-        e.check_error(response[0x22:0x24])
-        payload = self.decrypt(response[0x38:])
+        resp, err = self.send_packet(0x6A, packet)
+        e.check_error(err)
 
-        p_len = int.from_bytes(payload[:0x02], "little")
-        if p_len + 2 > len(payload):
+        p_len = int.from_bytes(resp[:0x02], "little")
+        if p_len + 2 > len(resp):
             raise ValueError(
                 "hysen_response_error", "first byte of response is not length"
             )
 
-        nom_crc = int.from_bytes(payload[p_len : p_len + 2], "little")
-        real_crc = CRC16.calculate(payload[0x02:p_len])
+        nom_crc = int.from_bytes(resp[p_len : p_len + 2], "little")
+        real_crc = CRC16.calculate(resp[0x02:p_len])
         if nom_crc != real_crc:
             raise ValueError("hysen_response_error", "CRC check on response failed")
 
-        return payload[0x02:p_len]
+        return resp[0x02:p_len]
 
     def get_temp(self) -> float:
         """Return the room temperature in degrees celsius."""

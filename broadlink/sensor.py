@@ -29,10 +29,9 @@ class a1(Device):
     def check_sensors_raw(self) -> dict:
         """Return the state of the sensors in raw format."""
         packet = bytearray([0x1])
-        response = self.send_packet(0x6A, packet)
-        e.check_error(response[0x22:0x24])
-        payload = self.decrypt(response[0x38:])
-        data = payload[0x4:]
+        resp, err = self.send_packet(0x6A, packet)
+        e.check_error(err)
+        data = resp[0x4:]
 
         temperature = struct.unpack("<bb", data[:0x2])
         temperature = temperature[0x0] + temperature[0x1] / 10.0
