@@ -7,18 +7,19 @@ from . import exceptions as e
 from .device import Device
 
 
+@enum.unique
+class ColorMode(enum.IntEnum):
+    """Enumerates color modes."""
+
+    RGB = 0
+    WHITE = 1
+    SCENE = 2
+
+
 class lb1(Device):
     """Controls a Broadlink LB1."""
 
     TYPE = "LB1"
-
-    @enum.unique
-    class ColorMode(enum.IntEnum):
-        """Enumerates color modes."""
-
-        RGB = 0
-        WHITE = 1
-        SCENE = 2
 
     def get_state(self) -> dict:
         """Return the power state of the device.
@@ -42,7 +43,7 @@ class lb1(Device):
         saturation: int = None,
         transitionduration: int = None,
         maxworktime: int = None,
-        bulb_colormode: int = None,
+        bulb_colormode: ColorMode = None,
         bulb_scenes: str = None,
         bulb_scene: str = None,
         bulb_sceneidx: int = None,
@@ -110,14 +111,6 @@ class lb27r1(Device):
 
     TYPE = "LB27R1"
 
-    @enum.unique
-    class ColorMode(enum.IntEnum):
-        """Enumerates color modes."""
-
-        RGB = 0
-        WHITE = 1
-        SCENE = 2
-
     def get_state(self) -> dict:
         """Return the power state of the device.
 
@@ -140,7 +133,7 @@ class lb27r1(Device):
         saturation: int = None,
         transitionduration: int = None,
         maxworktime: int = None,
-        bulb_colormode: int = None,
+        bulb_colormode: ColorMode = None,
         bulb_scenes: str = None,
         bulb_scene: str = None,
     ) -> dict:
